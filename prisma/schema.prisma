@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ClientCase {
+  id            Int      @id @default(autoincrement())
+  clientName    String   @db.VarChar(255)
+  caseType      String   @db.VarChar(100)
+  notes         String?  @db.Text
+  totalContract Decimal  @db.Decimal(10, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relationship with case notes
+  caseNotes     CaseNote[]
+
+  @@map("client_cases")
+}
+
+model CaseNote {
+  id           Int        @id @default(autoincrement())
+  content      String     @db.Text
+  createdAt    DateTime   @default(now())
+  clientCaseId Int
+  
+  // Relationship back to client case
+  clientCase   ClientCase @relation(fields: [clientCaseId], references: [id], onDelete: Cascade)
+
+  @@map("case_notes")
+}
