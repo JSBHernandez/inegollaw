@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     })
     
     // Transform the data to include the latest note text
-    const transformedCases = clientCases.map((clientCase: any) => ({
+    const transformedCases = clientCases.map((clientCase: typeof clientCases[0]) => ({
       ...clientCase,
       latestNote: clientCase.caseNotes[0]?.content || null,
       latestNoteDate: clientCase.caseNotes[0]?.createdAt || null,
