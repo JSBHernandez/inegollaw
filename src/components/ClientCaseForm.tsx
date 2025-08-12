@@ -52,9 +52,15 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
     setSubmitMessage('')
 
     try {
+      // Process the data to handle empty totalContract values
+      const processedData = {
+        ...data,
+        totalContract: data.totalContract || undefined
+      }
+
       const url = '/api/client-cases'
       const method = isEditing ? 'PUT' : 'POST'
-      const body = isEditing ? { ...data, id: editingCase.id } : data
+      const body = isEditing ? { ...processedData, id: editingCase.id } : processedData
 
       const response = await fetch(url, {
         method,
@@ -176,9 +182,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             id="totalContract"
             step="0.01"
             min="0"
-            {...register('totalContract', { 
-              setValueAs: (value) => value === '' ? undefined : parseFloat(value) || undefined
-            })}
+            {...register('totalContract')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
             placeholder="Enter contract amount"
             style={{ 
