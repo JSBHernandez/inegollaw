@@ -9,6 +9,7 @@ interface ClientCase {
   id: number
   clientName: string
   caseType: string
+  status: string
   notes?: string
   totalContract: number
   createdAt: string
@@ -34,6 +35,9 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
     formState: { errors },
   } = useForm<ClientCaseFormData>({
     resolver: zodResolver(clientCaseSchema),
+    defaultValues: {
+      status: 'Active'
+    }
   })
 
   // Load data when editing
@@ -41,6 +45,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
     if (editingCase) {
       setValue('clientName', editingCase.clientName)
       setValue('caseType', editingCase.caseType)
+      setValue('status', (editingCase.status as 'Active' | 'Completed') || 'Active')
       setValue('notes', editingCase.notes || '')
       setValue('totalContract', editingCase.totalContract)
     } else {
@@ -93,11 +98,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {isEditing ? 'Edit Client Case' : 'Register New Client Case'}
-      </h2>
-      
+    <div className="bg-white">      
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-1">
@@ -107,8 +108,12 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             type="text"
             id="clientName"
             {...register('clientName')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
             placeholder="Enter client name"
+            style={{ 
+              opacity: 1,
+              WebkitTextFillColor: '#111827' as any,
+            }}
           />
           {errors.clientName && (
             <p className="mt-1 text-sm text-red-600">{errors.clientName.message}</p>
@@ -122,7 +127,11 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
           <select
             id="caseType"
             {...register('caseType')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+            style={{ 
+              opacity: 1,
+              WebkitTextFillColor: '#111827' as any,
+            }}
           >
             <option value="">Select case type</option>
             <option value="Green Card">Green Card</option>
@@ -143,6 +152,27 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
         </div>
 
         <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+            Status *
+          </label>
+          <select
+            id="status"
+            {...register('status')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+            style={{ 
+              opacity: 1,
+              WebkitTextFillColor: '#111827' as any,
+            }}
+          >
+            <option value="Active">Active</option>
+            <option value="Completed">Completed</option>
+          </select>
+          {errors.status && (
+            <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
+          )}
+        </div>
+
+        <div>
           <label htmlFor="totalContract" className="block text-sm font-medium text-gray-700 mb-1">
             Total Contract Amount ($) *
           </label>
@@ -152,8 +182,12 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             step="0.01"
             min="0"
             {...register('totalContract', { valueAsNumber: true })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
             placeholder="Enter contract amount"
+            style={{ 
+              opacity: 1,
+              WebkitTextFillColor: '#111827' as any,
+            }}
           />
           {errors.totalContract && (
             <p className="mt-1 text-sm text-red-600">{errors.totalContract.message}</p>
@@ -168,8 +202,12 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             id="notes"
             rows={4}
             {...register('notes')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
             placeholder="Enter any additional notes..."
+            style={{ 
+              opacity: 1,
+              WebkitTextFillColor: '#111827' as any,
+            }}
           />
           {errors.notes && (
             <p className="mt-1 text-sm text-red-600">{errors.notes.message}</p>
@@ -180,7 +218,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting 
               ? (isEditing ? 'Updating...' : 'Registering...') 

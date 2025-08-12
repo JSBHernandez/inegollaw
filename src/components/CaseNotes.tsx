@@ -130,7 +130,7 @@ export default function CaseNotes({ clientCaseId, clientName, onClose, onNoteAdd
               <textarea
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 rows={3}
                 placeholder="Enter your note here (e.g., waiting on documents, sent package to USCIS, etc.)"
                 required
@@ -139,7 +139,7 @@ export default function CaseNotes({ clientCaseId, clientName, onClose, onNoteAdd
             <button
               type="submit"
               disabled={isSubmitting || !newNote.trim()}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSubmitting ? 'Adding...' : 'Add Note'}
             </button>

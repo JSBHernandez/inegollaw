@@ -2,6 +2,7 @@ export interface ClientCase {
   id: number
   clientName: string
   caseType: string
+  status: string
   notes?: string
   totalContract: number
   createdAt: Date
@@ -26,3 +27,5 @@ export type CaseType =
   | 'DACA'
   | 'Fiance(e) Visa'
   | 'Tourist Visa'
+
+export type CaseStatus = 'Active' | 'Completed'

@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
       data: {
         clientName: validatedData.clientName,
         caseType: validatedData.caseType,
+        status: validatedData.status,
         notes: validatedData.notes,
         totalContract: validatedData.totalContract,
       },
@@ -122,6 +123,7 @@ export async function PUT(request: NextRequest) {
       data: {
         clientName: validatedData.clientName,
         caseType: validatedData.caseType,
+        status: validatedData.status,
         notes: validatedData.notes,
         totalContract: validatedData.totalContract,
       },

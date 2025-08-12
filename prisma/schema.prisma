@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,17 +8,17 @@ datasource db {
 }
 
 model ClientCase {
-  id            Int      @id @default(autoincrement())
-  clientName    String   @db.VarChar(255)
-  caseType      String   @db.VarChar(100)
-  notes         String?  @db.Text
-  totalContract Decimal  @db.Decimal(10, 2)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  // Relationship with case notes
+  id            Int        @id @default(autoincrement())
+  clientName    String     @db.VarChar(255)
+  caseType      String     @db.VarChar(100)
+  notes         String?    @db.Text
+  totalContract Decimal    @db.Decimal(10, 2)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  status        String     @default("Active") @db.VarChar(50)
   caseNotes     CaseNote[]
 
+  @@index([status], map: "idx_client_cases_status")
   @@map("client_cases")
 }
 
@@ -30,9 +27,8 @@ model CaseNote {
   content      String     @db.Text
   createdAt    DateTime   @default(now())
   clientCaseId Int
-  
-  // Relationship back to client case
   clientCase   ClientCase @relation(fields: [clientCaseId], references: [id], onDelete: Cascade)
 
+  @@index([clientCaseId], map: "case_notes_clientCaseId_fkey")
   @@map("case_notes")
 }
