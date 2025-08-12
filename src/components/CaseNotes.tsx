@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface CaseNote {
   id: number
@@ -22,11 +22,7 @@ export default function CaseNotes({ clientCaseId, clientName, onClose, onNoteAdd
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    fetchNotes()
-  }, [clientCaseId])
-
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     try {
       const response = await fetch(`/api/case-notes?clientCaseId=${clientCaseId}`)
       const result = await response.json()
@@ -41,12 +37,16 @@ export default function CaseNotes({ clientCaseId, clientName, onClose, onNoteAdd
       } else {
         setError(result.error || 'Failed to fetch notes')
       }
-    } catch (err) {
+    } catch (_) {
       setError('Failed to fetch notes')
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [clientCaseId])
+
+  useEffect(() => {
+    fetchNotes()
+  }, [fetchNotes])
 
   const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,7 +81,7 @@ export default function CaseNotes({ clientCaseId, clientName, onClose, onNoteAdd
       } else {
         setError(result.error || 'Failed to add note')
       }
-    } catch (err) {
+    } catch (_) {
       setError('Failed to add note')
     } finally {
       setIsSubmitting(false)

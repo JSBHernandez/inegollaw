@@ -2,6 +2,10 @@
 
 import { useState } from 'react'
 
+interface WebkitStyle extends React.CSSProperties {
+  WebkitTextFillColor?: string
+}
+
 interface LoginFormProps {
   onLoginSuccess: () => void
 }
@@ -33,7 +37,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
       } else {
         setError(result.error || 'Login failed')
       }
-    } catch (err) {
+    } catch (_) {
       setError('Connection error. Please try again.')
     } finally {
       setIsLoading(false)
@@ -63,8 +67,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               required
               style={{ 
                 opacity: 1,
-                WebkitTextFillColor: '#111827' as any,
-              }}
+                WebkitTextFillColor: '#111827',
+              } as WebkitStyle}
             />
           </div>
 
@@ -82,8 +86,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               required
               style={{ 
                 opacity: 1,
-                WebkitTextFillColor: '#111827' as any,
-              }}
+                WebkitTextFillColor: '#111827',
+              } as WebkitStyle}
             />
           </div>
 

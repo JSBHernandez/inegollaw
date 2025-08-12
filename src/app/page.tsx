@@ -5,16 +5,7 @@ import ClientCaseForm from '@/components/ClientCaseForm'
 import ClientCasesList from '@/components/ClientCasesList'
 import LoginForm from '@/components/LoginForm'
 import { useAuth } from '@/hooks/useAuth'
-
-interface ClientCase {
-  id: number
-  clientName: string
-  caseType: string
-  notes?: string
-  totalContract: number
-  createdAt: string
-  updatedAt: string
-}
+import { ClientCase } from '@/types'
 
 export default function Home() {
   const { isAuthenticated, isLoading, login, logout } = useAuth()
@@ -28,7 +19,12 @@ export default function Home() {
   }
 
   const handleEditCase = (clientCase: ClientCase) => {
-    setEditingCase(clientCase)
+    // Ensure status has a default value for backward compatibility
+    const caseWithStatus = {
+      ...clientCase,
+      status: clientCase.status || 'Active'
+    }
+    setEditingCase(caseWithStatus)
     setShowFormModal(true)
   }
 

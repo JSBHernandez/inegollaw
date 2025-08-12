@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     })
 
     return response
-  } catch (error) {
+  } catch (_) {
     return NextResponse.json(
       { success: false, error: 'Login failed' },
       { status: 500 }

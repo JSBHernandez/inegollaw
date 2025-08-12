@@ -41,7 +41,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
       } else {
         setError(result.error || 'Failed to fetch cases')
       }
-    } catch (err) {
+    } catch (_) {
       setError('Failed to fetch cases')
     } finally {
       setLoading(false)
@@ -66,7 +66,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
       } else {
         alert(`Error deleting case: ${result.error}`)
       }
-    } catch (error) {
+    } catch (_) {
       alert('Failed to delete case. Please try again.')
     } finally {
       setDeletingId(null)
@@ -103,12 +103,6 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
       hour: '2-digit',
       minute: '2-digit',
     })
-  }
-
-  const isUpdated = (createdAt: string, updatedAt: string) => {
-    const created = new Date(createdAt).getTime()
-    const updated = new Date(updatedAt).getTime()
-    return Math.abs(updated - created) > 1000 // More than 1 second difference
   }
 
   if (loading) {

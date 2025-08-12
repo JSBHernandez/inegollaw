@@ -3,17 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ClientCase } from '@/types'
 import { clientCaseSchema, ClientCaseFormData } from '@/lib/validations'
 
-interface ClientCase {
-  id: number
-  clientName: string
-  caseType: string
-  status: string
-  notes?: string
-  totalContract: number
-  createdAt: string
-  updatedAt: string
+interface WebkitStyle extends React.CSSProperties {
+  WebkitTextFillColor?: string
 }
 
 interface ClientCaseFormProps {
@@ -84,7 +78,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
       } else {
         setSubmitMessage(`Error: ${result.error}`)
       }
-    } catch (error) {
+    } catch (_) {
       setSubmitMessage('Failed to submit form. Please try again.')
     } finally {
       setIsSubmitting(false)
@@ -112,8 +106,8 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             placeholder="Enter client name"
             style={{ 
               opacity: 1,
-              WebkitTextFillColor: '#111827' as any,
-            }}
+              WebkitTextFillColor: '#111827',
+            } as WebkitStyle}
           />
           {errors.clientName && (
             <p className="mt-1 text-sm text-red-600">{errors.clientName.message}</p>
@@ -130,8 +124,8 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
             style={{ 
               opacity: 1,
-              WebkitTextFillColor: '#111827' as any,
-            }}
+              WebkitTextFillColor: '#111827',
+            } as WebkitStyle}
           >
             <option value="">Select case type</option>
             <option value="Green Card">Green Card</option>
@@ -161,8 +155,8 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
             style={{ 
               opacity: 1,
-              WebkitTextFillColor: '#111827' as any,
-            }}
+              WebkitTextFillColor: '#111827',
+            } as WebkitStyle}
           >
             <option value="Active">Active</option>
             <option value="Completed">Completed</option>
@@ -186,8 +180,8 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             placeholder="Enter contract amount"
             style={{ 
               opacity: 1,
-              WebkitTextFillColor: '#111827' as any,
-            }}
+              WebkitTextFillColor: '#111827',
+            } as WebkitStyle}
           />
           {errors.totalContract && (
             <p className="mt-1 text-sm text-red-600">{errors.totalContract.message}</p>
@@ -206,8 +200,8 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             placeholder="Enter any additional notes..."
             style={{ 
               opacity: 1,
-              WebkitTextFillColor: '#111827' as any,
-            }}
+              WebkitTextFillColor: '#111827',
+            } as WebkitStyle}
           />
           {errors.notes && (
             <p className="mt-1 text-sm text-red-600">{errors.notes.message}</p>

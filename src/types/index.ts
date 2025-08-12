@@ -2,11 +2,11 @@ export interface ClientCase {
   id: number
   clientName: string
   caseType: string
-  status: string
+  status?: string
   notes?: string
   totalContract: number
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | string
+  updatedAt: Date | string
 }
 
 export interface ApiResponse<T> {
