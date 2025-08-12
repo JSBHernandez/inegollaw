@@ -4,7 +4,7 @@ export interface ClientCase {
   caseType: string
   status?: string
   notes?: string
-  totalContract: number
+  totalContract?: number
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -28,4 +28,4 @@ export type CaseType =
   | 'Fiance(e) Visa'
   | 'Tourist Visa'
 
-export type CaseStatus = 'Active' | 'Completed'
+export type CaseStatus = 'Active' | 'Completed' | 'Other'

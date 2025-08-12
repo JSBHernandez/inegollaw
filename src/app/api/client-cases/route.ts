@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
         caseType: validatedData.caseType,
         status: validatedData.status,
         notes: validatedData.notes,
-        totalContract: validatedData.totalContract,
+        totalContract: validatedData.totalContract || null,
       },
     })
     
@@ -125,7 +125,7 @@ export async function PUT(request: NextRequest) {
         caseType: validatedData.caseType,
         status: validatedData.status,
         notes: validatedData.notes,
-        totalContract: validatedData.totalContract,
+        totalContract: validatedData.totalContract || null,
       },
     })
     

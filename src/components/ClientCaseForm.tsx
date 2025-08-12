@@ -160,6 +160,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
           >
             <option value="Active">Active</option>
             <option value="Completed">Completed</option>
+            <option value="Other">Other</option>
           </select>
           {errors.status && (
             <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
@@ -168,14 +169,16 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
 
         <div>
           <label htmlFor="totalContract" className="block text-sm font-medium text-gray-700 mb-1">
-            Total Contract Amount ($) *
+            Total Contract Amount ($)
           </label>
           <input
             type="number"
             id="totalContract"
             step="0.01"
             min="0"
-            {...register('totalContract', { valueAsNumber: true })}
+            {...register('totalContract', { 
+              setValueAs: (value) => value === '' ? undefined : parseFloat(value) || undefined
+            })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
             placeholder="Enter contract amount"
             style={{ 

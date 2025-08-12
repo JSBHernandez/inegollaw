@@ -12,7 +12,7 @@ model ClientCase {
   clientName    String     @db.VarChar(255)
   caseType      String     @db.VarChar(100)
   notes         String?    @db.Text
-  totalContract Decimal    @db.Decimal(10, 2)
+  totalContract Decimal?   @db.Decimal(10, 2)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   status        String     @default("Active") @db.VarChar(50)

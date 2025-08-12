@@ -158,6 +158,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
               <option value="All">All</option>
               <option value="Active">Active</option>
               <option value="Completed">Completed</option>
+              <option value="Other">Other</option>
             </select>
           </div>
         </div>
@@ -210,16 +211,18 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                     </td>
                     <td className="w-32 px-6 py-6 align-top">
                       <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full whitespace-nowrap ${
-                        clientCase.status === 'Active' 
+                        (clientCase.status || 'Active') === 'Active' 
                           ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-800'
+                          : (clientCase.status || 'Active') === 'Completed'
+                          ? 'bg-gray-100 text-gray-800'
+                          : 'bg-orange-100 text-orange-800'  // For "Other"
                       }`}>
-                        {clientCase.status}
+                        {clientCase.status || 'Active'}
                       </span>
                     </td>
                     <td className="w-40 px-6 py-6 align-top">
                       <div className="text-base text-gray-900 font-semibold whitespace-nowrap">
-                        {formatCurrency(clientCase.totalContract)}
+                        {clientCase.totalContract ? formatCurrency(clientCase.totalContract) : 'N/A'}
                       </div>
                     </td>
                     <td className="w-48 px-6 py-6 align-top">
@@ -291,11 +294,13 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                   </div>
                   <div className="flex justify-start">
                     <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full whitespace-nowrap ${
-                      clientCase.status === 'Active' 
+                      (clientCase.status || 'Active') === 'Active' 
                         ? 'bg-green-100 text-green-800' 
-                        : 'bg-gray-100 text-gray-800'
+                        : (clientCase.status || 'Active') === 'Completed'
+                        ? 'bg-gray-100 text-gray-800'
+                        : 'bg-orange-100 text-orange-800'  // For "Other"
                     }`}>
-                      {clientCase.status}
+                      {clientCase.status || 'Active'}
                     </span>
                   </div>
                 </div>
@@ -305,7 +310,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                   <div className="grid grid-cols-2 gap-6 mb-5">
                     <div className="space-y-1">
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Contract Amount</span>
-                      <div className="text-lg font-bold text-gray-900">{formatCurrency(clientCase.totalContract)}</div>
+                      <div className="text-lg font-bold text-gray-900">{clientCase.totalContract ? formatCurrency(clientCase.totalContract) : 'N/A'}</div>
                     </div>
                     <div className="space-y-1">
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Created Date</span>
