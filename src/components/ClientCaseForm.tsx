@@ -55,7 +55,9 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
       // Process the data to handle empty totalContract values
       const processedData = {
         ...data,
-        totalContract: data.totalContract || undefined
+        totalContract: data.totalContract && !isNaN(Number(data.totalContract)) 
+          ? Number(data.totalContract) 
+          : undefined
       }
 
       const url = '/api/client-cases'
