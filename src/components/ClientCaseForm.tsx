@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ClientCase } from '@/types'
 import { clientCaseSchema, ClientCaseFormData } from '@/lib/validations'
@@ -47,22 +47,14 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
     }
   }, [editingCase, setValue, reset])
 
-  const onSubmit = async (data: ClientCaseFormData) => {
+  const onSubmit: SubmitHandler<ClientCaseFormData> = async (data) => {
     setIsSubmitting(true)
     setSubmitMessage('')
 
     try {
-      // Process the data to handle empty totalContract values
-      const processedData = {
-        ...data,
-        totalContract: data.totalContract && !isNaN(Number(data.totalContract)) 
-          ? Number(data.totalContract) 
-          : undefined
-      }
-
       const url = '/api/client-cases'
       const method = isEditing ? 'PUT' : 'POST'
-      const body = isEditing ? { ...processedData, id: editingCase.id } : processedData
+      const body = isEditing ? { ...data, id: editingCase.id } : data
 
       const response = await fetch(url, {
         method,
@@ -184,7 +176,13 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             id="totalContract"
             step="0.01"
             min="0"
-            {...register('totalContract')}
+            {...register('totalContract', {
+              setValueAs: (value: string) => {
+                if (!value || value === '') return undefined;
+                const num = parseFloat(value);
+                return isNaN(num) ? undefined : num;
+              }
+            })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
             placeholder="Enter contract amount"
             style={{ 
