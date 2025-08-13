@@ -10,6 +10,7 @@ interface ClientCase {
   status: string
   notes?: string
   totalContract: number
+  paralegal?: string
   createdAt: string
   updatedAt: string
   latestNote?: string | null
@@ -186,6 +187,9 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                   <th className="w-40 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Contract Amount
                   </th>
+                  <th className="w-40 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    Paralegal
+                  </th>
                   <th className="w-48 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Created Date
                   </th>
@@ -220,6 +224,17 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                     <td className="w-40 px-6 py-6 align-top">
                       <div className="text-base text-gray-900 font-semibold whitespace-nowrap">
                         {clientCase.totalContract ? formatCurrency(clientCase.totalContract) : 'N/A'}
+                      </div>
+                    </td>
+                    <td className="w-40 px-6 py-6 align-top">
+                      <div className="text-sm text-gray-900">
+                        {clientCase.paralegal ? (
+                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                            {clientCase.paralegal}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 italic">Not assigned</span>
+                        )}
                       </div>
                     </td>
                     <td className="w-48 px-6 py-6 align-top">
@@ -307,6 +322,20 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Contract Amount</span>
                       <div className="text-lg font-bold text-gray-900">{clientCase.totalContract ? formatCurrency(clientCase.totalContract) : 'N/A'}</div>
                     </div>
+                    <div className="space-y-1">
+                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Paralegal</span>
+                      <div className="text-sm font-medium text-gray-900">
+                        {clientCase.paralegal ? (
+                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                            {clientCase.paralegal}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 italic">Not assigned</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mb-5">
                     <div className="space-y-1">
                       <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Created Date</span>
                       <div className="text-sm font-medium text-gray-900">{formatDate(clientCase.createdAt)}</div>

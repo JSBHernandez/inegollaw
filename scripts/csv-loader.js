@@ -36,7 +36,8 @@ async function loadFromCSV(filePath) {
           caseType: values[1] || '',
           status: values[2] || 'Active',
           notes: values[3] || '',
-          totalContract: values[4] && values[4] !== '' ? parseFloat(values[4]) : null
+          totalContract: values[4] && values[4] !== '' ? parseFloat(values[4]) : null,
+          paralegal: values[5] || null
         }
 
         if (caseData.clientName && caseData.caseType) {
@@ -89,16 +90,16 @@ async function loadFromCSV(filePath) {
 
 // Crear archivo CSV de ejemplo
 function createSampleCSV() {
-  const sampleCSV = `clientName,caseType,status,notes,totalContract
-"Juan Pérez González","Derecho Civil","Active","Divorcio con acuerdo mutuo",3500.00
-"Laura Martínez Silva","Derecho Penal","Active","Defensa por delito menor",5000.00
-"Miguel Torres Ruiz","Derecho Laboral","Completed","Demanda laboral resuelta",2800.00
-"Carmen López Díaz","Derecho Comercial","Other","Constitución de empresa",
-"Fernando García Vega","Derecho de Familia","Active","Custodia de menores",4200.50`
+  const sampleCSV = `clientName,caseType,status,notes,totalContract,paralegal
+"Juan Pérez González","Derecho Civil","Active","Divorcio con acuerdo mutuo",3500.00,"Tania Estrada"
+"Laura Martínez Silva","Derecho Penal","Active","Defensa por delito menor",5000.00,"Katherine Pineda"
+"Miguel Torres Ruiz","Derecho Laboral","Completed","Demanda laboral resuelta",2800.00,"Maria Jovanovic"
+"Carmen López Díaz","Derecho Comercial","Other","Constitución de empresa",,"Herminio Garza"
+"Fernando García Vega","Derecho de Familia","Active","Custodia de menores",4200.50,`
 
   fs.writeFileSync('sample-cases.csv', sampleCSV)
   console.log('📄 Archivo sample-cases.csv creado con datos de ejemplo')
-  console.log('📝 Formato esperado: clientName,caseType,status,notes,totalContract')
+  console.log('📝 Formato esperado: clientName,caseType,status,notes,totalContract,paralegal')
 }
 
 module.exports = {

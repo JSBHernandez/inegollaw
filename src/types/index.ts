@@ -5,6 +5,7 @@ export interface ClientCase {
   status?: string
   notes?: string
   totalContract?: number
+  paralegal?: string
   createdAt: Date | string
   updatedAt: Date | string
 }

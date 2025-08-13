@@ -13,6 +13,7 @@ model ClientCase {
   caseType      String     @db.VarChar(100)
   notes         String?    @db.Text
   totalContract Decimal?   @db.Decimal(10, 2)
+  paralegal     String?    @db.VarChar(100)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   status        String     @default("Active") @db.VarChar(50)

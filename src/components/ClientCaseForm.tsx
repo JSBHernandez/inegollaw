@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ClientCase } from '@/types'
-import { clientCaseSchema, ClientCaseFormData } from '@/lib/validations'
+import { clientCaseSchema, ClientCaseFormData, paralegalOptions } from '@/lib/validations'
 
 interface WebkitStyle extends React.CSSProperties {
   WebkitTextFillColor?: string
@@ -42,6 +42,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
       setValue('status', (editingCase.status as 'Active' | 'Completed') || 'Active')
       setValue('notes', editingCase.notes || '')
       setValue('totalContract', editingCase.totalContract)
+      setValue('paralegal', editingCase.paralegal as 'Tania Estrada' | 'Katherine Pineda' | 'Maria Jovanovic' | 'Herminio Garza' | undefined)
     } else {
       reset()
     }
@@ -191,6 +192,36 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
           />
           {errors.totalContract && (
             <p className="mt-1 text-sm text-red-600">{errors.totalContract.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="paralegal" className="block text-sm font-medium text-gray-700 mb-1">
+            Paralegal
+          </label>
+          <select
+            id="paralegal"
+            {...register('paralegal', {
+              setValueAs: (value: string) => {
+                if (!value || value === '') return undefined;
+                return value;
+              }
+            })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+            style={{ 
+              opacity: 1,
+              WebkitTextFillColor: '#111827',
+            } as WebkitStyle}
+          >
+            <option value="">Select paralegal (optional)</option>
+            {paralegalOptions.map((paralegal) => (
+              <option key={paralegal} value={paralegal}>
+                {paralegal}
+              </option>
+            ))}
+          </select>
+          {errors.paralegal && (
+            <p className="mt-1 text-sm text-red-600">{errors.paralegal.message}</p>
           )}
         </div>
 

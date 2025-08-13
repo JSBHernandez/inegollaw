@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
         status: validatedData.status,
         notes: validatedData.notes,
         totalContract: validatedData.totalContract || null,
+        paralegal: (validatedData.paralegal && validatedData.paralegal.trim() !== '') ? validatedData.paralegal : null,
       },
     })
     
@@ -126,6 +127,7 @@ export async function PUT(request: NextRequest) {
         status: validatedData.status,
         notes: validatedData.notes,
         totalContract: validatedData.totalContract || null,
+        paralegal: (validatedData.paralegal && validatedData.paralegal.trim() !== '') ? validatedData.paralegal : null,
       },
     })
     
