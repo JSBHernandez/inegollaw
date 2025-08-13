@@ -138,7 +138,7 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
             <option value="Consular-Embassy Process">Consular-Embassy Process</option>
             <option value="DACA">DACA</option>
             <option value="Fiance(e) Visa">Fiance(e) Visa</option>
-            <option value="Tourist Visa">Tourist Visa</option>
+            <option value="Other">Other</option>
           </select>
           {errors.caseType && (
             <p className="mt-1 text-sm text-red-600">{errors.caseType.message}</p>
@@ -160,7 +160,6 @@ export default function ClientCaseForm({ onSuccess, editingCase, onCancelEdit }:
           >
             <option value="Active">Active</option>
             <option value="Completed">Completed</option>
-            <option value="Other">Other</option>
           </select>
           {errors.status && (
             <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>

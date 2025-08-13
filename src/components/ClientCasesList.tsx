@@ -158,7 +158,6 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
               <option value="All">All</option>
               <option value="Active">Active</option>
               <option value="Completed">Completed</option>
-              <option value="Other">Other</option>
             </select>
           </div>
         </div>
@@ -213,9 +212,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                       <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full whitespace-nowrap ${
                         (clientCase.status || 'Active') === 'Active' 
                           ? 'bg-green-100 text-green-800' 
-                          : (clientCase.status || 'Active') === 'Completed'
-                          ? 'bg-gray-100 text-gray-800'
-                          : 'bg-orange-100 text-orange-800'  // For "Other"
+                          : 'bg-gray-100 text-gray-800'  // For "Completed"
                       }`}>
                         {clientCase.status || 'Active'}
                       </span>
@@ -296,9 +293,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                     <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full whitespace-nowrap ${
                       (clientCase.status || 'Active') === 'Active' 
                         ? 'bg-green-100 text-green-800' 
-                        : (clientCase.status || 'Active') === 'Completed'
-                        ? 'bg-gray-100 text-gray-800'
-                        : 'bg-orange-100 text-orange-800'  // For "Other"
+                        : 'bg-gray-100 text-gray-800'  // For "Completed"
                     }`}>
                       {clientCase.status || 'Active'}
                     </span>
