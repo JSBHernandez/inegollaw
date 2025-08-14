@@ -3,6 +3,14 @@
 import { useEffect, useState } from 'react'
 import CaseNotes from './CaseNotes'
 
+interface SafariInputStyle {
+  color?: string
+  opacity?: number
+  WebkitTextFillColor?: string
+  WebkitAppearance?: string
+  backgroundColor?: string
+}
+
 interface ClientCase {
   id: number
   clientName: string
@@ -228,7 +236,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                   WebkitTextFillColor: '#000000',
                   WebkitAppearance: 'none',
                   backgroundColor: '#ffffff',
-                } as any}
+                } as React.CSSProperties & SafariInputStyle}
               />
               {searchQuery && (
                 <button
