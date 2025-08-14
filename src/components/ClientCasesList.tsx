@@ -3,10 +3,6 @@
 import { useEffect, useState } from 'react'
 import CaseNotes from './CaseNotes'
 
-interface WebkitStyle extends React.CSSProperties {
-  WebkitTextFillColor?: string
-}
-
 interface ClientCase {
   id: number
   clientName: string
@@ -225,11 +221,14 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
                 onFocus={() => setShowSuggestions(searchQuery.trim().length > 0)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                 placeholder="Type client name..."
-                className="px-3 py-1.5 pr-8 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full text-gray-900 placeholder-gray-500"
+                className="px-3 py-1.5 pr-8 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full"
                 style={{ 
+                  color: '#000000',
                   opacity: 1,
-                  WebkitTextFillColor: '#111827',
-                } as WebkitStyle}
+                  WebkitTextFillColor: '#000000',
+                  WebkitAppearance: 'none',
+                  backgroundColor: '#ffffff',
+                } as any}
               />
               {searchQuery && (
                 <button
