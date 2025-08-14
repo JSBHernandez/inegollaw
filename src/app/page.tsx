@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import ClientCaseForm from '@/components/ClientCaseForm'
 import ClientCasesList from '@/components/ClientCasesList'
 import LoginForm from '@/components/LoginForm'
@@ -59,11 +60,24 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-white shadow-sm">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Inegol Law Legal Services Management</h1>
-              <p className="mt-2 text-gray-600">Manage immigration cases and client contracts efficiently</p>
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex justify-between items-center">
+            <div className="flex items-center space-x-6">
+              <div>
+                <Image
+                  src="/LOGO-CABEZALN-PNG.png"
+                  alt="Inegol Law Logo"
+                  width={150}
+                  height={60}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Client Portal</h1>
+                <p className="mt-1 text-gray-600">Manage immigration cases and client contracts efficiently</p>
+              </div>
             </div>
             <div className="flex space-x-4">
               <button
@@ -77,6 +91,45 @@ export default function Home() {
                 className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
               >
                 Logout
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="lg:hidden">
+            {/* First Row: Logo and Logout Button */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex-shrink-0">
+                <Image
+                  src="/LOGO-CABEZALN-PNG.png"
+                  alt="Inegol Law Logo"
+                  width={120}
+                  height={48}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors text-sm"
+              >
+                Logout
+              </button>
+            </div>
+            
+            {/* Second Row: Title and Description */}
+            <div className="mb-4">
+              <h1 className="text-xl font-bold text-gray-900">Client Portal</h1>
+              <p className="mt-1 text-sm text-gray-600">Manage immigration cases and client contracts efficiently</p>
+            </div>
+            
+            {/* Third Row: Register Button (Full Width) */}
+            <div>
+              <button
+                onClick={() => setShowFormModal(true)}
+                className="w-full bg-orange-600 text-white px-4 py-3 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors font-medium"
+              >
+                + Register New Client Case
               </button>
             </div>
           </div>

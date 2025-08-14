@@ -30,6 +30,8 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [selectedCase, setSelectedCase] = useState<ClientCase | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   const fetchCases = async () => {
     try {
@@ -74,16 +76,58 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
     }
   }
 
-  // Filter cases based on status
+  // Filter cases based on status and search query
   useEffect(() => {
-    if (statusFilter === 'All') {
-      setFilteredCases(cases)
-    } else {
-      setFilteredCases(cases.filter(clientCase => 
+    let filtered = cases
+
+    // Filter by status
+    if (statusFilter !== 'All') {
+      filtered = filtered.filter(clientCase => 
         clientCase.status === statusFilter
-      ))
+      )
     }
-  }, [cases, statusFilter])
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(clientCase =>
+        clientCase.clientName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }
+
+    setFilteredCases(filtered)
+  }, [cases, statusFilter, searchQuery])
+
+  // Get unique client names for suggestions
+  const getClientNameSuggestions = () => {
+    if (!searchQuery.trim()) return []
+    
+    const suggestions = cases
+      .map(clientCase => clientCase.clientName)
+      .filter(name => 
+        name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        name.toLowerCase() !== searchQuery.toLowerCase()
+      )
+      .filter((name, index, arr) => arr.indexOf(name) === index) // Remove duplicates
+      .slice(0, 5) // Limit to 5 suggestions
+    
+    return suggestions
+  }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchQuery(value)
+    setShowSuggestions(value.trim().length > 0)
+  }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion)
+    setShowSuggestions(false)
+  }
+
+  const clearSearch = () => {
+    setSearchQuery('')
+    setShowSuggestions(false)
+  }
 
   useEffect(() => {
     fetchCases()
@@ -144,29 +188,103 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-gray-900">Client Cases ({filteredCases.length})</h2>
         </div>
-        {/* Status Filter */}
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex items-center space-x-2">
-            <label htmlFor="statusFilter" className="text-sm font-medium text-gray-700">
+        {/* Filters */}
+        <div className="flex flex-col lg:flex-row lg:flex-wrap gap-4 lg:items-center">
+          {/* Status Filter */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <label htmlFor="statusFilter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
               Filter by Status:
             </label>
             <select
               id="statusFilter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              className="px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full sm:w-auto"
             >
               <option value="All">All</option>
               <option value="Active">Active</option>
               <option value="Completed">Completed</option>
             </select>
           </div>
+          
+          {/* Search by Name */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 relative flex-1 lg:flex-initial">
+            <label htmlFor="nameSearch" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+              Search by Name:
+            </label>
+            <div className="relative w-full lg:w-64">
+              <input
+                type="text"
+                id="nameSearch"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onFocus={() => setShowSuggestions(searchQuery.trim().length > 0)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                placeholder="Type client name..."
+                className="px-3 py-1.5 pr-8 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full"
+              />
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+              
+              {/* Suggestions dropdown */}
+              {showSuggestions && getClientNameSuggestions().length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                  {getClientNameSuggestions().map((suggestion, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="w-full px-3 py-2 text-left hover:bg-blue-50 hover:text-blue-700 text-sm border-b border-gray-100 last:border-b-0"
+                    >
+                      <span className="font-medium">
+                        {suggestion.substring(0, suggestion.toLowerCase().indexOf(searchQuery.toLowerCase()))}
+                      </span>
+                      <span className="bg-yellow-200">
+                        {suggestion.substring(
+                          suggestion.toLowerCase().indexOf(searchQuery.toLowerCase()),
+                          suggestion.toLowerCase().indexOf(searchQuery.toLowerCase()) + searchQuery.length
+                        )}
+                      </span>
+                      <span className="font-medium">
+                        {suggestion.substring(suggestion.toLowerCase().indexOf(searchQuery.toLowerCase()) + searchQuery.length)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       {filteredCases.length === 0 ? (
         <div className="p-6 text-center text-gray-500">
-          <p>{statusFilter === 'All' ? 'No client cases registered yet.' : `No ${statusFilter.toLowerCase()} cases found.`}</p>
+          <p>
+            {searchQuery.trim() 
+              ? `No cases found for "${searchQuery}"${statusFilter !== 'All' ? ` with status "${statusFilter}"` : ''}.`
+              : statusFilter === 'All' 
+                ? 'No client cases registered yet.' 
+                : `No ${statusFilter.toLowerCase()} cases found.`
+            }
+          </p>
+          {(searchQuery.trim() || statusFilter !== 'All') && (
+            <button
+              onClick={() => {
+                clearSearch()
+                setStatusFilter('All')
+              }}
+              className="mt-2 text-blue-600 hover:text-blue-800 text-sm underline"
+            >
+              Clear all filters
+            </button>
+          )}
         </div>
       ) : (
         <>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 interface WebkitStyle extends React.CSSProperties {
   WebkitTextFillColor?: string
@@ -48,8 +49,17 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Inegol Law</h1>
-          <p className="text-gray-600">Immigration Legal Services</p>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/LOGO-CABEZALN-PNG.png"
+              alt="Inegol Law Logo"
+              width={200}
+              height={80}
+              className="object-contain"
+              priority
+            />
+          </div>
+          <p className="text-xl text-gray-600">Client Portal</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
