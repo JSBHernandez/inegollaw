@@ -42,6 +42,10 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
   const [paralegalFilter, setParalegalFilter] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [sortField, setSortField] = useState<string | null>(null)
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(30)
 
   const fetchCases = async () => {
     try {
@@ -111,8 +115,11 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
       )
     }
 
-    setFilteredCases(filtered)
-  }, [cases, statusFilter, paralegalFilter, searchQuery])
+    // Apply sorting
+    const sorted = sortCases(filtered)
+
+    setFilteredCases(sorted)
+  }, [cases, statusFilter, paralegalFilter, searchQuery, sortField, sortDirection])
 
   // Get unique client names for suggestions
   const getClientNameSuggestions = () => {
@@ -145,6 +152,122 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
     setSearchQuery('')
     setShowSuggestions(false)
   }
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      // If clicking the same field, toggle direction
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      // If clicking a new field, set it as active and default to ascending
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const sortCases = (casesToSort: ClientCase[]) => {
+    if (!sortField) return casesToSort
+
+    return [...casesToSort].sort((a, b) => {
+      let aValue: string | number = ''
+      let bValue: string | number = ''
+
+      switch (sortField) {
+        case 'clientName':
+          aValue = a.clientName.toLowerCase()
+          bValue = b.clientName.toLowerCase()
+          break
+        case 'caseType':
+          aValue = a.caseType.toLowerCase()
+          bValue = b.caseType.toLowerCase()
+          break
+        case 'status':
+          aValue = (a.status || 'Active').toLowerCase()
+          bValue = (b.status || 'Active').toLowerCase()
+          break
+        case 'paralegal':
+          aValue = (a.paralegal || '').toLowerCase()
+          bValue = (b.paralegal || '').toLowerCase()
+          break
+        case 'createdAt':
+          aValue = new Date(a.createdAt).getTime()
+          bValue = new Date(b.createdAt).getTime()
+          break
+        case 'totalContract':
+          aValue = a.totalContract || 0
+          bValue = b.totalContract || 0
+          break
+        case 'latestNote':
+          aValue = (a.latestNote || '').toLowerCase()
+          bValue = (b.latestNote || '').toLowerCase()
+          break
+        default:
+          return 0
+      }
+
+      if (aValue < bValue) {
+        return sortDirection === 'asc' ? -1 : 1
+      }
+      if (aValue > bValue) {
+        return sortDirection === 'asc' ? 1 : -1
+      }
+      return 0
+    })
+  }
+
+  const SortableHeader = ({ field, children, className }: { field: string, children: React.ReactNode, className?: string }) => (
+    <th 
+      className={`px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-50 select-none ${className || ''}`}
+      onClick={() => handleSort(field)}
+    >
+      <div className="flex items-center justify-between">
+        <span>{children}</span>
+        <div className="flex flex-col ml-1">
+          <svg 
+            className={`w-3 h-3 ${sortField === field && sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
+          <svg 
+            className={`w-3 h-3 -mt-1 ${sortField === field && sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400'}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </div>
+      </div>
+    </th>
+  )
+
+  // Pagination functions
+  const totalPages = Math.ceil(filteredCases.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentCases = filteredCases.slice(startIndex, endIndex)
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1)
+    }
+  }
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1)
+    }
+  }
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [statusFilter, paralegalFilter, searchQuery, sortField, sortDirection])
 
   useEffect(() => {
     fetchCases()
@@ -203,7 +326,14 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-900">Client Cases ({filteredCases.length})</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Client Cases ({filteredCases.length})
+          </h2>
+          {filteredCases.length > 0 && (
+            <div className="text-sm text-gray-600">
+              Showing {startIndex + 1}-{Math.min(endIndex, filteredCases.length)} of {filteredCases.length} results
+            </div>
+          )}
         </div>
         {/* Filters */}
         <div className="flex flex-col lg:flex-row lg:flex-wrap gap-4 lg:items-center">
@@ -338,40 +468,40 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
             <table className="w-full table-fixed divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="w-48 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  <SortableHeader field="clientName" className="w-48">
                     Client Name
-                  </th>
-                  <th className="w-44 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  </SortableHeader>
+                  <SortableHeader field="caseType" className="w-52">
                     Case Type
-                  </th>
-                  <th className="w-32 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  </SortableHeader>
+                  <SortableHeader field="status" className="w-32">
                     Status
-                  </th>
-                  <th className="w-40 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  </SortableHeader>
+                  <SortableHeader field="totalContract" className="w-40">
                     Contract Amount
-                  </th>
-                  <th className="w-40 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  </SortableHeader>
+                  <SortableHeader field="paralegal" className="w-40">
                     Paralegal
-                  </th>
-                  <th className="w-48 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  </SortableHeader>
+                  <SortableHeader field="createdAt" className="w-48">
                     Created Date
-                  </th>
-                  <th className="flex-1 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  </SortableHeader>
+                  <SortableHeader field="latestNote" className="flex-1">
                     Latest Note
-                  </th>
+                  </SortableHeader>
                   <th className="w-32 px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredCases.map((clientCase) => (
+                {currentCases.map((clientCase) => (
                   <tr key={clientCase.id} className="hover:bg-gray-50">
                     <td className="w-48 px-6 py-6 align-top">
                       <div className="text-base font-medium text-gray-900 truncate">{clientCase.clientName}</div>
                     </td>
-                    <td className="w-44 px-6 py-6 align-top">
-                      <span className="inline-flex px-3 py-1 text-sm font-medium rounded-full bg-orange-100 text-orange-800 whitespace-nowrap">
+                    <td className="w-52 px-6 py-6 align-top">
+                      <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-orange-100 text-orange-800 text-center leading-tight">
                         {clientCase.caseType}
                       </span>
                     </td>
@@ -457,7 +587,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
 
           {/* Mobile/Tablet Card View */}
           <div className="lg:hidden divide-y divide-gray-200 bg-gray-50">
-            {filteredCases.map((clientCase) => (
+            {currentCases.map((clientCase) => (
               <div key={clientCase.id} className="bg-white mx-4 my-4 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {/* Card Header */}
                 <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
@@ -558,6 +688,98 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
             ))}
           </div>
         </>
+      )}
+
+      {/* Pagination */}
+      {filteredCases.length > itemsPerPage && (
+        <div className="px-6 py-4 border-t border-gray-200 bg-white">
+          <div className="flex items-center justify-between">
+            <div className="flex-1 flex justify-between sm:hidden">
+              {/* Mobile pagination */}
+              <button
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing page <span className="font-medium">{currentPage}</span> of{' '}
+                  <span className="font-medium">{totalPages}</span>
+                </p>
+              </div>
+              <div>
+                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  {/* Previous button */}
+                  <button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  
+                  {/* Page numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                    // Show only a few pages around current page
+                    if (
+                      page === 1 ||
+                      page === totalPages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => goToPage(page)}
+                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                            page === currentPage
+                              ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                              : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      )
+                    } else if (
+                      page === currentPage - 2 ||
+                      page === currentPage + 2
+                    ) {
+                      return (
+                        <span key={page} className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                          ...
+                        </span>
+                      )
+                    }
+                    return null
+                  })}
+                  
+                  {/* Next button */}
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Case Notes Modal */}
