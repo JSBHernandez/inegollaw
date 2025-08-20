@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import CaseNotes from './CaseNotes'
+import { paralegalOptions } from '@/lib/validations'
 
 interface SafariInputStyle {
   color?: string
@@ -235,10 +236,11 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
               className="px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full sm:w-auto"
             >
               <option value="All">All</option>
-              <option value="Katherine">Katherine</option>
-              <option value="Patty">Patty</option>
-              <option value="Joseph">Joseph</option>
-              <option value="Isabel">Isabel</option>
+              {paralegalOptions.map((paralegal) => (
+                <option key={paralegal} value={paralegal}>
+                  {paralegal}
+                </option>
+              ))}
             </select>
           </div>
           
