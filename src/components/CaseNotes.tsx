@@ -28,9 +28,9 @@ export default function CaseNotes({ clientCaseId, clientName, onClose, onNoteAdd
       const result = await response.json()
 
       if (result.success) {
-        // Sort notes chronologically (oldest first)
+        // Sort notes chronologically (newest first)
         const sortedNotes = result.data.sort((a: CaseNote, b: CaseNote) => 
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
         setNotes(sortedNotes)
         setError('')
@@ -157,7 +157,7 @@ export default function CaseNotes({ clientCaseId, clientName, onClose, onNoteAdd
             Case Progress History ({notes.length} notes)
           </h3>
           <p className="text-sm text-gray-600 mb-4">
-            Notes are displayed in chronological order (oldest first)
+            Notes are displayed in chronological order (newest first)
           </p>
           
           {isLoading ? (

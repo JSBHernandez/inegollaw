@@ -38,6 +38,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [selectedCase, setSelectedCase] = useState<ClientCase | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [paralegalFilter, setParalegalFilter] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [showSuggestions, setShowSuggestions] = useState(false)
 
@@ -84,7 +85,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
     }
   }
 
-  // Filter cases based on status and search query
+  // Filter cases based on status, paralegal, and search query
   useEffect(() => {
     let filtered = cases
 
@@ -92,6 +93,13 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
     if (statusFilter !== 'All') {
       filtered = filtered.filter(clientCase => 
         clientCase.status === statusFilter
+      )
+    }
+
+    // Filter by paralegal
+    if (paralegalFilter !== 'All') {
+      filtered = filtered.filter(clientCase => 
+        clientCase.paralegal === paralegalFilter
       )
     }
 
@@ -103,7 +111,7 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
     }
 
     setFilteredCases(filtered)
-  }, [cases, statusFilter, searchQuery])
+  }, [cases, statusFilter, paralegalFilter, searchQuery])
 
   // Get unique client names for suggestions
   const getClientNameSuggestions = () => {
@@ -215,6 +223,25 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
             </select>
           </div>
           
+          {/* Paralegal Filter */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <label htmlFor="paralegalFilter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+              Filter by Paralegal:
+            </label>
+            <select
+              id="paralegalFilter"
+              value={paralegalFilter}
+              onChange={(e) => setParalegalFilter(e.target.value)}
+              className="px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full sm:w-auto"
+            >
+              <option value="All">All</option>
+              <option value="Katherine">Katherine</option>
+              <option value="Patty">Patty</option>
+              <option value="Joseph">Joseph</option>
+              <option value="Isabel">Isabel</option>
+            </select>
+          </div>
+          
           {/* Search by Name */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 relative flex-1 lg:flex-initial">
             <label htmlFor="nameSearch" className="text-sm font-medium text-gray-700 whitespace-nowrap">
@@ -283,17 +310,18 @@ export default function ClientCasesList({ refreshTrigger, onEdit }: ClientCasesL
         <div className="p-6 text-center text-gray-500">
           <p>
             {searchQuery.trim() 
-              ? `No cases found for "${searchQuery}"${statusFilter !== 'All' ? ` with status "${statusFilter}"` : ''}.`
-              : statusFilter === 'All' 
+              ? `No cases found for "${searchQuery}"${statusFilter !== 'All' || paralegalFilter !== 'All' ? ` with current filters` : ''}.`
+              : statusFilter === 'All' && paralegalFilter === 'All'
                 ? 'No client cases registered yet.' 
-                : `No ${statusFilter.toLowerCase()} cases found.`
+                : `No cases found with current filters.`
             }
           </p>
-          {(searchQuery.trim() || statusFilter !== 'All') && (
+          {(searchQuery.trim() || statusFilter !== 'All' || paralegalFilter !== 'All') && (
             <button
               onClick={() => {
                 clearSearch()
                 setStatusFilter('All')
+                setParalegalFilter('All')
               }}
               className="mt-2 text-blue-600 hover:text-blue-800 text-sm underline"
             >

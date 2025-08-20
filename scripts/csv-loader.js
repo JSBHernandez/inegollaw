@@ -21,14 +21,18 @@ async function loadFromCSV(filePath) {
       return
     }
 
+    // Detectar separador (coma o punto y coma)
+    const separator = lines[0].includes(';') ? ';' : ','
+    console.log(`🔍 Separador detectado: "${separator}"`)
+
     // Asumir que la primera línea es el header
-    const headers = lines[0].split(',').map(h => h.trim())
+    const headers = lines[0].split(separator).map(h => h.trim())
     console.log('📋 Headers detectados:', headers)
 
     const cases = []
     
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''))
+      const values = lines[i].split(separator).map(v => v.trim().replace(/"/g, ''))
       
       if (values.length >= 3) { // Al menos clientName, caseType, status
         const caseData = {
