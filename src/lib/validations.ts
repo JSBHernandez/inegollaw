@@ -5,7 +5,7 @@ export const paralegalOptions = [
   'Katherine Pineda', 
   'Maria Jovanovic',
   'Herminio Garza',
-  'Vanessa Velazco',
+  'Vanessa Velasco',
   'Fernanda Inegol'
 ] as const
 
