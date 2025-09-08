@@ -4,7 +4,9 @@ export const paralegalOptions = [
   'Tania Estrada',
   'Katherine Pineda', 
   'Maria Jovanovic',
-  'Herminio Garza'
+  'Herminio Garza',
+  'Vanessa Velazco',
+  'Fernanda Inegol'
 ] as const
 
 export const clientCaseSchema = z.object({
